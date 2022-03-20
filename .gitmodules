@@ -1,0 +1,15 @@
+[submodule "dl"]
+	path = dl
+	url = https://github.com/Noooooob233/tina-d1-dl
+[submodule "package"]
+	path = package
+	url = https://github.com/Noooooob233/tina-d1-package
+[submodule "prebuilt"]
+	path = prebuilt
+	url = https://github.com/Noooooob233/tina-d1-prebuilt
+[submodule "lichee/brandy-2.0"]
+	path = lichee/brandy-2.0
+	url = https://github.com/Noooooob233/tina-d1-brandy-2.0
+[submodule "lichee/linux-5.4"]
+	path = lichee/linux-5.4
+	url = https://github.com/Noooooob233/tina-d1-linux-5.4
