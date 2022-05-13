@@ -24,7 +24,7 @@ debug_mode  = 1
 ;----------------------------------------------------------------------------------
 [target]
 boot_clock   	= 720
-storage_type    = 5
+storage_type    = 3
 nand_use_ubi	= 1
 
 [spinor_para]
@@ -195,8 +195,8 @@ twi_sda  = port:PG15<3><1><default><default>
 ;----------------------------------------------------------------------------------
 [uart_para]
 uart_debug_port = 0
-uart_debug_tx   = port:PF02<3><1><default><default>
-uart_debug_rx   = port:PF04<3><1><default><default>
+uart_debug_tx   = port:PE02<6><1><default><default>
+uart_debug_rx   = port:PE03<6><1><default><default>
 
 
 ;----------------------------------------------------------------------------------

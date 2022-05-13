@@ -70,7 +70,7 @@
 	pinctrl-names = "active", "sleep";
 	pinctrl-0 = <&pwm7_pin_a>;
 	pinctrl-1 = <&pwm7_pin_b>;
-	status = "okay";
+	status = "disabled";
 };
 
 &sdc0_pins_a {
@@ -264,30 +264,38 @@
 	lcd_used            = <1>;
 
 	lcd_driver_name     = "tft08006";
-	lcd_backlight       = <100>;
+	lcd_backlight       = <50>;
 	lcd_if              = <4>;
 
-	lcd_x               = <800>;
-	lcd_y               = <1280>;
-	lcd_width           = <52>;
-	lcd_height          = <52>;
-	lcd_dclk_freq       = <70>;
+	lcd_x               = <480>;
+	lcd_y               = <800>;
+	lcd_width           = <40>;
+	lcd_height          = <67>;
 
 	lcd_pwm_used        = <1>;
 	lcd_pwm_ch          = <2>;
 	lcd_pwm_freq        = <1000>;
 	lcd_pwm_pol         = <0>;
 	lcd_pwm_max_limit   = <255>;
-
+/*
 	lcd_hbp             = <32>;
 	lcd_ht              = <868>;
 	lcd_hspw            = <4>;
 	lcd_vbp             = <12>;
-	lcd_vt              = <1311>;
+	lcd_vt              = <500>;
 	lcd_vspw            = <4>;
+*/
+
+	lcd_dclk_freq       = <34>;
+	lcd_hbp             = <120>;
+	lcd_ht              = <624>;
+	lcd_hspw            = <48>;
+	lcd_vbp             = <28>;
+	lcd_vt              = <908>;
+	lcd_vspw            = <12>;
 
 	lcd_dsi_if          = <0>;
-	lcd_dsi_lane        = <4>;
+	lcd_dsi_lane        = <2>;
 	lcd_lvds_if         = <0>;
 	lcd_lvds_colordepth = <0>;
 	lcd_lvds_mode       = <0>;
@@ -307,7 +315,7 @@
 	lcdgamma4iep        = <22>;
 	smart_color         = <90>;
 
-	lcd_gpio_0 =  <&pio PG 13 GPIO_ACTIVE_HIGH>;
+	lcd_gpio_0 =  <&pio PB 5 GPIO_ACTIVE_HIGH>;
 	pinctrl-0 = <&dsi4lane_pins_a>;
 	pinctrl-1 = <&dsi4lane_pins_b>;
 };
