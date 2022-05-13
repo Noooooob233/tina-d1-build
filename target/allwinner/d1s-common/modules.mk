@@ -13,14 +13,10 @@ define KernelPackage/sunxi-vin
   FILES+=$(LINUX_DIR)/drivers/media/platform/sunxi-vin/modules/sensor/ov5640.ko
   FILES+=$(LINUX_DIR)/drivers/media/platform/sunxi-vin/vin_v4l2.ko
   KCONFIG:=\
-	CONFIG_MEDIA_SUPPORT=y \
-	CONFIG_MEDIA_CAMERA_SUPPORT=y \
     CONFIG_V4L_PLATFORM_DRIVERS=y \
-    CONFIG_MEDIA_CONTROLLER=y \
-    CONFIG_MEDIA_SUBDRV_AUTOSELECT=y \
 	CONFIG_SUNXI_PLATFORM_DRIVERS=y \
     CONFIG_VIDEO_SUNXI_VIN \
-    CONFIG_CSI_VIN \
+    CONFIG_CSI_VIN=m \
 	CONFIG_CSI_CCI=n \
 	CONFIG_I2C_SUNXI=y
   AUTOLOAD:=$(call AutoLoad,90,videobuf2-memops videobuf2-dma-contig vin_io ov5640 vin_v4l2)
@@ -41,13 +37,7 @@ define KernelPackage/sunxi-uvc
   FILES+=$(LINUX_DIR)/drivers/media/common/videobuf2/videobuf2-vmalloc.ko
   FILES+=$(LINUX_DIR)/drivers/media/usb/uvc/uvcvideo.ko
   KCONFIG:= \
-	CONFIG_MEDIA_SUPPORT=y \
-	CONFIG_MEDIA_CAMERA_SUPPORT=y \
-    CONFIG_V4L_PLATFORM_DRIVERS=y \
-    CONFIG_MEDIA_CONTROLLER=y \
-    CONFIG_MEDIA_SUBDRV_AUTOSELECT=y \
     CONFIG_MEDIA_USB_SUPPORT=y \
-	CONFIG_VIDEO_V4L2=y \
     CONFIG_USB_VIDEO_CLASS \
     CONFIG_USB_VIDEO_CLASS_INPUT_EVDEV
   AUTOLOAD:=$(call AutoLoad,95,videobuf2-common videobuf2-v4l2 videobuf2-memops videobuf2_vmalloc uvcvideo)
@@ -94,7 +84,7 @@ $(eval $(call KernelPackage,net-broadcom))
 define KernelPackage/net-xr829-40M
   SUBMENU:=$(WIRELESS_MENU)
   TITLE:=xr829 support (staging)
-  DEPENDS:= +xr829-firmware +@IPV6 +@XR829_USE_40M_SDD +@USES_XRADIO +@PACKAGE_xr829-rftest
+  DEPENDS:= +xr829-firmware +@IPV6 +@XR829_USE_40M_SDD +@USES_XRADIO +@USES_XR829 +@PACKAGE_xr829-rftest
   KCONFIG:=\
 	CONFIG_XR829_WLAN=m \
 	CONFIG_PM=y\
@@ -149,7 +139,6 @@ define KernelPackage/net-xr829
 	CONFIG_RFKILL_PM=y \
 	CONFIG_RFKILL_GPIO=y
 
-
   #FILES:=$(LINUX_DIR)/drivers/net/wireless/xr829/wlan/xradio_core.ko
   #FILES+=$(LINUX_DIR)/drivers/net/wireless/xr829/wlan/xradio_wlan.ko
   #FILES+=$(LINUX_DIR)/drivers/net/wireless/xr829/umac/xradio_mac.ko
@@ -165,42 +154,34 @@ endef
 
 $(eval $(call KernelPackage,net-xr829))
 
-define KernelPackage/net-xr819s
+define KernelPackage/net-rtl8723ds
   SUBMENU:=$(WIRELESS_MENU)
-  TITLE:=xr819s support (staging)
-  #DEPENDS:= +xr819s-firmware +@IPV6 +@USES_XRADIO +@PACKAGE_xr819s-rftest +@PACKAGE_xr819s-rftest
-  DEPENDS:= +xr819s-firmware +@IPV6 +@USES_XRADIO
+  TITLE:=RTL8723DS support (staging)
+  DEPENDS:= +@IPV6
+  FILES:=$(LINUX_DIR)/drivers/net/wireless/rtl8723ds/8723ds.ko
   KCONFIG:=\
-	CONFIG_XR819S_WLAN=m \
-	CONFIG_PM=y\
-	CONFIG_BT=n \
-	CONFIG_BT_BREDR=n \
-	CONFIG_BT_RFCOMM=n \
-	CONFIG_BT_RFCOMM_TTY=n \
-	CONFIG_BT_DEBUGFS=n \
-	CONFIG_XR_BT_LPM=n \
-	CONFIG_XR_BT_FDI=n \
-	CONFIG_BT_HCIUART=n \
-	CONFIG_BT_HCIUART_H4=n \
-	CONFIG_HFP_OVER_PCM=n \
-	CONFIG_RFKILL=n \
-	CONFIG_RFKILL_PM=n \
-	CONFIG_RFKILL_GPIO=n
+	CONFIG_RTL8723DS=m \
+	CONFIG_BT=y \
+	CONFIG_BT_BREDR=y \
+	CONFIG_BT_RFCOMM=y \
+	CONFIG_BT_RFCOMM_TTY=y \
+	CONFIG_BT_DEBUGFS=y \
+	CONFIG_BT_HCIUART_RTL3WIRE=y \
+	CONFIG_BT_HCIUART=y \
+	CONFIG_BT_HCIUART_H4=y \
+	CONFIG_HFP_OVER_PCM=y \
+	CONFIG_RFKILL=y \
+	CONFIG_RFKILL_PM=y \
+	CONFIG_RFKILL_GPIO=y
 
-  #FILES:=$(LINUX_DIR)/drivers/net/wireless/xr819s/wlan/xradio_core.ko
-  #FILES+=$(LINUX_DIR)/drivers/net/wireless/xr819s/wlan/xradio_wlan.ko
-  #FILES+=$(LINUX_DIR)/drivers/net/wireless/xr819s/umac/xradio_mac.ko
-  #AUTOLOAD:=$(call AutoProbe, xradio_mac xradio_core xradio_wlan)
-
-  FILES+=$(LINUX_DIR)/drivers/net/wireless/xr819s/xr819s.ko
-  AUTOLOAD:=$(call AutoProbe, xr819s)
+  AUTOLOAD:=$(call AutoProbe,8723ds)
 endef
 
-define KernelPackage/net-xr819s/description
- Kernel modules for xr819s support
+define KernelPackage/net-rtl8723ds/description
+  Kernel modules for RealTek RTL8723DS support
 endef
 
-$(eval $(call KernelPackage,net-xr819s))
+$(eval $(call KernelPackage,net-rtl8723ds))
 
 define KernelPackage/net-rtl8821cs
   SUBMENU:=$(WIRELESS_MENU)
@@ -230,6 +211,7 @@ define KernelPackage/sunxi-disp
 	  CONFIG_DISP2_SUNXI_SUPPORT_SMBL=y \
 	  CONFIG_DISP2_SUNXI_SUPPORT_ENAHNCE=y \
 	  CONFIG_SUNXI_DISP2_FB_DECOMPRESS_LZMA=n \
+	  CONFIG_DISP2_SUNXI_DEVICE_OFF_ON_RELEASE=n \
 	  CONFIG_VDPO_DISP2_SUNXI=n \
 	  CONFIG_EDP_DISP2_SUNXI=n \
 	  CONFIG_HDMI_DISP2_SUNXI=n \
@@ -273,6 +255,8 @@ define KernelPackage/sunxi-disp
 	  CONFIG_LCD_SUPPORT_RT13QV005D=n \
 	  CONFIG_LCD_SUPPORT_ST7789V_CPU=n \
 	  CONFIG_LCD_SUPPORT_CC08021801_310_800X1280=n \
+	  CONFIG_LCD_SUPPORT_JD9366AB_3=n \
+	  CONFIG_LCD_SUPPORT_TFT08006=y \
 	  CONFIG_DRM=n
   FILES+=$(LINUX_DIR)/drivers/video/fbdev/sunxi/disp2/disp/disp.ko
   AUTOLOAD:=$(call AutoLoad,10,disp,1)
@@ -357,20 +341,5 @@ endef
 define KernelPackage/touchscreen-gt9xxnew/description
  Enable support for gt9xxnew touchscreen port.
 endef
+
 $(eval $(call KernelPackage,touchscreen-gt9xxnew))
-
-define KernelPackage/gpadc_key
-  SUBMENU:=$(INPUT_MODULES_MENU)
-  TITLE:=gpadc_key support
-  DEPENDS:= +kmod-input-core
-  KCONFIG:= \
-	CONFIG_INPUT_SENSOR=y \
-	CONFIG_SUNXI_GPADC=m
-  FILES:=$(LINUX_DIR)/drivers/input/sensor/sunxi_gpadc.ko
-  AUTOLOAD:=$(call AutoProbe,gpadc_key)
-endef
-
-define KernelPackage/gpadc_key/description
- Enable support for gpadc_key port.
-endef
-$(eval $(call KernelPackage,gpadc_key))

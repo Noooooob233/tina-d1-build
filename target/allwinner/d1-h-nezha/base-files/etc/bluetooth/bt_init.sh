@@ -1,6 +1,5 @@
 #!/bin/sh
-bt_hciattach="hciattach"
-
+bt_hciattach="rtk_hciattach"
 start_hci_attach()
 {
 	h=`ps | grep "$bt_hciattach" | grep -v grep`
@@ -8,8 +7,13 @@ start_hci_attach()
 		killall "$bt_hciattach"
 	}
 
-	#xradio init
-	"$bt_hciattach" -n ttyS1 xradio >/dev/null 2>&1 &
+	#realtek h5 init
+	echo 0 > /sys/class/rfkill/rfkill0/state;
+	sleep 1
+	echo 1 > /sys/class/rfkill/rfkill0/state;
+	sleep 1
+
+	"$bt_hciattach" -n -s 115200 /dev/ttyS1 rtk_h5 >/dev/null 2>&1 &
 
 	wait_hci0_count=0
 	while true
@@ -22,6 +26,35 @@ start_hci_attach()
 			exit 1
 		}
 	done
+	return 0
+}
+
+hci_start()
+{
+	h=`ps | grep "$bt_hciattach" | grep -v grep`
+	if [ -n "$h" ] ;then
+		echo "Bluetooth init has been completed!!"
+	else
+		start_hci_attach
+	fi
+
+	hciconfig hci0 up
+
+	if [ $? == 0 ] ; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+hci_stop()
+{
+
+	h=`ps | grep "$bt_hciattach" | grep -v grep`
+	if [ -n "$h" ] ;then
+		hciconfig hci0 down
+	fi
+	return 0
 }
 
 start() {
@@ -34,9 +67,10 @@ start() {
 
     d=`ps | grep bluetoothd | grep -v grep`
 	[ -z "$d" ] && {
+#		bluetoothd -n  &
 		/etc/bluetooth/bluetoothd start
 		sleep 1
-    }
+	}
 }
 
 ble_start() {
@@ -46,7 +80,7 @@ ble_start() {
 		start_hci_attach
 	fi
 
-	hci_is_up=`hciconfig hci0 | grep RUNNING`
+	hci_is_up=`hciconfig hci0 | grep UP RUNNING`
 	[ -z "$hci_is_up" ] && {
 		hciconfig hci0 up
 	}
@@ -77,6 +111,12 @@ case "$1" in
         ;;
   ble_start)
 	    ble_start
+		;;
+  hci_start)
+		hci_start
+		;;
+  hci_stop)
+		hci_stop
 		;;
   *)
         echo "Usage: $0 {start|stop}"
